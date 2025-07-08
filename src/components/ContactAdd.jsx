@@ -1,4 +1,47 @@
-import React, { useState } from "react"
+import React, { useState } from "react";
+import styled from "styled-components";
+
+const Form = styled.form`
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  background: #f7fafc;
+  padding: 18px 14px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(44, 62, 80, 0.07);
+`;
+const Label = styled.label`
+  display: flex;
+  flex-direction: column;
+  font-weight: 500;
+  color: #2a4365;
+`;
+const Input = styled.input`
+  margin-top: 6px;
+  padding: 8px 10px;
+  border: 1px solid #b2bec3;
+  border-radius: 6px;
+  font-size: 1em;
+  transition: border 0.2s;
+  &:focus {
+    border-color: #3182ce;
+    outline: none;
+  }
+`;
+const Button = styled.button`
+  background: linear-gradient(90deg, #3182ce 0%, #63b3ed 100%);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 0;
+  font-size: 1em;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+  &:hover {
+    background: linear-gradient(90deg, #2b6cb0 0%, #4299e1 100%);
+  }
+`;
 
 const ContactAdd = ({ onAdd }) => {
     const [name, setName] = useState("")
@@ -20,10 +63,10 @@ const ContactAdd = ({ onAdd }) => {
     }
 
     return (
-        <form onSubmit={handleSubmit}>
-            <label>
+        <Form onSubmit={handleSubmit}>
+            <Label>
                 Name:
-                <input
+                <Input
                     type="text"
                     name="name"
                     pattern="^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
@@ -32,10 +75,10 @@ const ContactAdd = ({ onAdd }) => {
                     value={name}
                     onChange={e => setName(e.target.value)}
                 />
-            </label>
-            <label>
+            </Label>
+            <Label>
                 Number:
-                <input
+                <Input
                     type="tel"
                     name="number"
                     pattern="\\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}"
@@ -44,10 +87,10 @@ const ContactAdd = ({ onAdd }) => {
                     value={number}
                     onChange={e => setNumber(e.target.value)}
                 />
-            </label>
-            <button type="submit">Add contact</button>
-        </form>
+            </Label>
+            <Button type="submit">Add contact</Button>
+        </Form>
     )
 }
 
-export default ContactAdd
+export default ContactAdd;
