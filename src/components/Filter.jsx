@@ -16,12 +16,12 @@ const Input = styled.input`
 `;
 
 const Filter = ({ value, onChange }) => (
-    <Input
-        type="text"
-        value={value}
-        onChange={onChange}
-        placeholder="Search contacts..."
-    />
+  <Input
+    type="text"
+    placeholder="Search contacts..."
+    value={value}
+    onChange={onChange}
+  />
 );
 
 export default Filter;

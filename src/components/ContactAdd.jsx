@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 
 const Form = styled.form`
@@ -43,54 +43,75 @@ const Button = styled.button`
   }
 `;
 
-const ContactAdd = ({ onAdd }) => {
-    const [name, setName] = useState("")
-    const [number, setNumber] = useState("")
+const initialContacts = [
+  { id: 'id-1', name: 'Rosie Simpson', number: '459-12-56' },
+  { id: 'id-2', name: 'Hermione Kline', number: '443-89-12' },
+  { id: 'id-3', name: 'Eden Clements', number: '645-17-79' },
+  { id: 'id-4', name: 'Annie Copeland', number: '227-91-26' },
+];
 
-    // Генерація id через timestamp + випадковий суфікс
-    const generateId = () =>
-        Date.now().toString(36) + Math.random().toString(36).substr(2, 5)
+export const ContactsContext = React.createContext();
 
-    const handleSubmit = (e) => {
-        e.preventDefault()
-        if (!name.trim() || !number.trim()) return
-        const newContact = { id: generateId(), name: name.trim(), number: number.trim() }
-        const added = onAdd(newContact)
-        if (added) {
-            setName("")
-            setNumber("")
-        }
+const ContactAdd = () => {
+  const [contacts, setContacts] = useState(() => {
+    const saved = localStorage.getItem('contacts');
+    return saved ? JSON.parse(saved) : initialContacts;
+  });
+  const [name, setName] = useState("");
+  const [number, setNumber] = useState("");
+
+  useEffect(() => {
+    localStorage.setItem('contacts', JSON.stringify(contacts));
+  }, [contacts]);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const isExist = contacts.some(
+      contact => contact.name.toLowerCase() === name.toLowerCase()
+    );
+    if (isExist) {
+      alert(`${name} is already in contacts!`);
+      return;
     }
+    setContacts(prev => [
+      ...prev,
+      { id: Date.now().toString(), name, number }
+    ]);
+    setName("");
+    setNumber("");
+  };
 
-    return (
-        <Form onSubmit={handleSubmit}>
-            <Label>
-                Name:
-                <Input
-                    type="text"
-                    name="name"
-                    pattern="^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
-                    title="Name may contain only letters, apostrophe, dash and spaces. For example Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan"
-                    required
-                    value={name}
-                    onChange={e => setName(e.target.value)}
-                />
-            </Label>
-            <Label>
-                Number:
-                <Input
-                    type="tel"
-                    name="number"
-                    pattern="\\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}"
-                    title="Phone number must be digits and can contain spaces, dashes, parentheses and can start with +"
-                    required
-                    value={number}
-                    onChange={e => setNumber(e.target.value)}
-                />
-            </Label>
-            <Button type="submit">Add contact</Button>
-        </Form>
-    )
-}
+  return (
+    <ContactsContext.Provider value={{ contacts, setContacts }}>
+      <Form onSubmit={handleSubmit}>
+        <Label>
+          Name:
+          <Input
+            type="text"
+            name="name"
+            pattern="^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
+            title="Name may contain only letters, apostrophe, dash and spaces. For example Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan"
+            required
+            value={name}
+            onChange={e => setName(e.target.value)}
+          />
+        </Label>
+        <Label>
+          Number:
+          <Input
+            type="tel"
+            name="number"
+            pattern="\\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}"
+            title="Phone number must be digits and can contain spaces, dashes, parentheses and can start with +"
+            required
+            value={number}
+            onChange={e => setNumber(e.target.value)}
+          />
+        </Label>
+        <Button type="submit">Add contact</Button>
+      </Form>
+    </ContactsContext.Provider>
+  );
+};
 
 export default ContactAdd;
